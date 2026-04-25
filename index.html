@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="BootFlow: Bootstrapped Flow Matching Policies with Trajectory-Integrated Disagreement Exploration">
+  <meta name="keywords" content="BootFlow, Flow Matching, Diffusion Policy, RL Exploration, TIDE">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BootFlow</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <!-- MathJax: render inline TeX in $...$ -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="#">
+        <span class="icon">
+          <i class="fas fa-home"></i>
+        </span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">
+            BootFlow: Bootstrapped Flow Matching Policies with<br>
+            Trajectory-Integrated Disagreement Exploration
+          </h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Anonymous Authors</span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Paper under double-blind review &mdash; NeurIPS 2026 Submission</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper (OpenReview)</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Anonymous Code</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Headline comparison videos: BootFlow vs SDAC, four environments -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <h2 class="title is-3 has-text-centered">BootFlow vs. SDAC, side by side</h2>
+      <p class="has-text-centered" style="margin-bottom: 1.5rem; color:#555;">
+        Each clip pairs a single rollout from our method (left) with a rollout from the
+        SDAC baseline (right) at a comparable training step. SDAC topples on
+        exploration-heavy tasks; BootFlow stays upright.
+      </p>
+
+      <div class="columns is-centered">
+        <div class="column is-half">
+          <video autoplay muted loop playsinline controls
+                 style="width:100%;border-radius:6px;">
+            <source src="./static/videos/comparison_ant.mp4" type="video/mp4">
+          </video>
+          <p class="has-text-centered" style="margin-top:0.5rem;color:#444;">Ant-v4</p>
+        </div>
+        <div class="column is-half">
+          <video autoplay muted loop playsinline controls
+                 style="width:100%;border-radius:6px;">
+            <source src="./static/videos/comparison_walker2d.mp4" type="video/mp4">
+          </video>
+          <p class="has-text-centered" style="margin-top:0.5rem;color:#444;">Walker2d-v4</p>
+        </div>
+      </div>
+
+      <div class="columns is-centered">
+        <div class="column is-half">
+          <video autoplay muted loop playsinline controls
+                 style="width:100%;border-radius:6px;">
+            <source src="./static/videos/comparison_hopper.mp4" type="video/mp4">
+          </video>
+          <p class="has-text-centered" style="margin-top:0.5rem;color:#444;">Hopper-v4</p>
+        </div>
+        <div class="column is-half">
+          <video autoplay muted loop playsinline controls
+                 style="width:100%;border-radius:6px;">
+            <source src="./static/videos/comparison_humanoid.mp4" type="video/mp4">
+          </video>
+          <p class="has-text-centered" style="margin-top:0.5rem;color:#444;">Humanoid-v4</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Generative policies based on diffusion and flow matching deliver substantial
+            gains on continuous control benchmarks, but every published flow- and
+            diffusion-RL algorithm explores by injecting isotropic Gaussian noise or by
+            inheriting SAC-style entropy regularization &mdash; an undirected scheme that
+            wastes interactions on tasks with coordinated multi-joint control and early
+            termination. We introduce <strong>BootFlow</strong>, the first ensemble-based
+            exploration framework for generative RL policies. BootFlow pairs $K$ flow or
+            diffusion policy heads with $K$ <em>independent</em> Q-networks, each trained
+            on a bootstrapped subset of replay data. We show theoretically and empirically
+            that <em>shared</em> Q-targets cause the heads to provably collapse to a single
+            policy, while independent Q-targets preserve posterior diversity. On top of
+            this architecture we introduce <strong>TIDE</strong> (Trajectory-Integrated
+            Disagreement Exploration), an action-selection rule that scores candidates by
+            $Q_\text{mean}(a) + \beta \cdot \Delta_\text{traj}(a)$, where
+            $\Delta_\text{traj}$ aggregates inter-head disagreement across the entire
+            denoising trajectory and $\beta$ is calibrated online from the running
+            correlation between $\Delta_\text{traj}$ and the Q-standard-deviation, so the
+            bonus is active only when the two signals agree. On five MuJoCo locomotion
+            benchmarks &mdash; Ant, Walker2d, Hopper, HalfCheetah, Humanoid &mdash;
+            BootFlow with flow matching and TIDE delivers a $6.6\times$ paired-mean
+            improvement over SDAC on Ant-v4, with gains scaling with task exploration
+            difficulty. Multi-seed ablations isolate the contributions of independent
+            Q-targets, backbone choice (diffusion vs.\ flow matching), and exploration
+            rule (Thompson, UCB, TIDE).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- High-level idea -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">High-level idea</h2>
+        <figure class="image is-centered">
+          <img src="./static/images/intro.png" alt="BootFlow high-level overview">
+        </figure>
+        <div class="content has-text-justified">
+          <p style="margin-top: 1rem;">
+            BootFlow couples ensemble exploration with the iterative structure of generative
+            policies. At every environment step, $K$ independent actor&ndash;critic pairs each
+            generate $M$ action candidates by running the underlying flow ODE (or diffusion
+            reverse process) for $T$ steps. The TIDE rule then ranks these
+            $K \!\times\! M$ candidates by combining (i) the ensemble Q-mean and (ii) the
+            <em>trajectory-integrated</em> disagreement &mdash; the velocity-field standard
+            deviation aggregated across all denoising timesteps, not just at the terminal
+            action. Because trajectory disagreement is a tighter epistemic-uncertainty proxy
+            than terminal disagreement (Proposition 1 in the paper), and because the bonus
+            $\beta$ is gated by the running correlation between disagreement and Q-uncertainty,
+            BootFlow explores aggressively where the ensemble is genuinely uncertain and
+            backs off on unimodal tasks where it is not.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Methodology -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Methodology</h2>
+        <figure class="image is-centered">
+          <img src="./static/images/method.png" alt="BootFlow training and inference pipeline">
+        </figure>
+        <div class="content has-text-justified">
+          <p style="margin-top: 1rem;">
+            <strong>Bootstrapped sampling.</strong> Each gradient update draws $K$ independent
+            Bernoulli-masked subsets $\mathcal{D}_1, \ldots, \mathcal{D}_K$ from the replay
+            buffer (mask probability $p \!=\! 0.8$). Each actor&ndash;critic pair sees a
+            different $\sim\!80\%$ of the batch.
+          </p>
+          <p>
+            <strong>Per-head training.</strong> Each Q-network $Q_{\phi_k}$ is updated with a
+            soft Bellman target that uses a REDQ-style 2-of-$K$ minimum over adjacent
+            Q-networks; each policy $\pi_{\theta_k}$ is updated with a Q-weighted
+            score-matching (diffusion) or flow-matching loss whose importance weights come
+            from its <em>own</em> Q-network. Because every head optimizes a different
+            Q-weighted objective, the heads are driven toward genuinely different optima
+            rather than collapsing.
+          </p>
+          <p>
+            <strong>Action selection at interaction time.</strong> Every head generates $M$
+            candidates by integrating the flow ODE (or diffusion reverse process) for $T$
+            steps. The TIDE rule scores each candidate $a$ by
+            $\,Q_\text{mean}(a) + \beta \cdot \Delta_\text{traj}(a)\,$, where
+            $\Delta_\text{traj}$ is the inter-head velocity disagreement integrated over the
+            entire denoising trajectory and $\beta$ is calibrated online by the running
+            Pearson correlation $\rho(\Delta_\text{traj}, \sigma_Q)$. The candidate with the
+            highest TIDE score is executed. The full per-step cost is one denoising/flow
+            integration per head, which we measure in the paper&apos;s wall-clock table.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Learning curves -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Learning curves</h2>
+        <figure class="image is-centered">
+          <img src="./static/images/learning_curves_2.png" alt="Learning curves on five MuJoCo locomotion tasks">
+        </figure>
+        <div class="content has-text-justified">
+          <p style="margin-top: 1rem;">
+            Training curves on five MuJoCo locomotion tasks (1M environment steps; 5M on
+            Humanoid). Solid lines are the multi-seed mean; shaded regions are
+            $\pm 1$ standard deviation across seeds $\{100, 200, 300, 400, 500\}$. BootFlow
+            with either backbone clearly separates from SDAC on tasks that reward strategic
+            exploration (Ant, Walker2d), matches SDAC on unimodal tasks (Hopper, HalfCheetah),
+            and extends the ceiling on Humanoid. The bottom-right panel reports the
+            <em>aggregate normalized return</em> averaged across all five environments
+            after per-environment $[5\%, 95\%]$ percentile normalization, so high-scale
+            environments do not dominate.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Diagnostics -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Ensemble diagnostics</h2>
+        <figure class="image is-centered">
+          <img src="./static/images/diagnostics_2.png" alt="Ensemble diagnostics: head disagreement and Q-network divergence">
+        </figure>
+        <div class="content has-text-justified">
+          <p style="margin-top: 1rem;">
+            <strong>Top row:</strong> mean head disagreement, defined as the per-dimension
+            standard deviation across the $K$ policy heads evaluated at the terminal
+            denoising step. Flow matching maintains $3$&ndash;$5\times$ higher disagreement
+            than diffusion across every environment, confirming that flow matching supports
+            a more diverse ensemble.
+            <strong>Bottom row:</strong> Q-network divergence across the $K$ independent
+            critics. Both backbones show the behavior predicted by the diversity-preservation
+            theorem in the paper: Q-nets steadily diverge as training proceeds rather than
+            collapsing onto each other &mdash; the failure mode that shared Q-targets would
+            induce.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@inproceedings{anonymous2026bootflow,
+  title  = {{BootFlow}: Bootstrapped Flow Matching Policies with Trajectory-Integrated Disagreement Exploration},
+  author = {Anonymous Authors},
+  booktitle = {Submitted to the Conference on Neural Information Processing Systems (NeurIPS)},
+  year   = {2026},
+  note   = {Under double-blind review}
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This anonymized project page is licensed under a
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+            The page template is borrowed from the
+            <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> project.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
